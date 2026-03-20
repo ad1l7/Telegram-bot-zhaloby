@@ -88,6 +88,11 @@ def handle_all_files(message):
 
     chat_id = message.chat.id
 
+    # ❗ защита от дублей
+    if message.message_id in processed_messages:
+        return
+    processed_messages.add(message.message_id)
+
     if chat_id not in user_data:
         return
 
@@ -137,7 +142,6 @@ def handle_all_files(message):
     })
 
     bot.send_message(chat_id, f"Файл {filename} сохранен ✅")
-
 
 # =========================
 # 🚀 СОЗДАНИЕ СДЕЛКИ
