@@ -10,7 +10,7 @@ BITRIX_WEBHOOK = os.getenv("BITRIX_WEBHOOK")
 
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
-
+processed_updates = set()
 MAX_FILE_SIZE = 20 * 1024 * 1024
 user_data = {}
 
@@ -46,6 +46,12 @@ def get_chat_id(deal_id):
 def telegram_webhook():
     json_str = request.get_data().decode("UTF-8")
     update = telebot.types.Update.de_json(json_str)
+
+    # ❗ защита от дублей
+    if update.update_id in processed_updates:
+        return "OK"
+    processed_updates.add(update.update_id)
+
     bot.process_new_updates([update])
     return "OK"
 
